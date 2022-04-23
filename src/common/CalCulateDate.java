@@ -39,7 +39,7 @@ public class CalCulateDate {
 		System.out.println(lastDayOfMonth("20220420", "yyyyMMdd"));
 		// now()일때
 		System.out.println("now()");
-		System.out.println(lastDayOfMonth("2022-04-20 23:32:44", "yyyy-MM-dd"));
+		System.out.println(lastDayOfMonth("2022-04-20 23:32:44", "yyyy-MM-ttdd"));
 		System.out.println("6글자");
 		System.out.println(lastDayOfMonth("202204", "yyyyMMdd"));
 	
@@ -100,15 +100,19 @@ public class CalCulateDate {
 			resultStr = formatedLastDayOfMonth;
 		} catch (StringIndexOutOfBoundsException e) {
 			LOG.warning("[StringIndexOutOfBoundsException] Parameter is not match date time.  'baseDate' must be at least 6 characters long.  [ERROR input : String baseDate = " + baseDate + " ] -------- lastDayOfMonth");
+			e.printStackTrace();
 			throw e;
 		} catch (DateTimeException e) {
 			LOG.warning("[DateTimeException] Parameter is not match Date time type.  [ERROR input : String baseDate = " + baseDate + " ] -------- lastDayOfMonth");
+			e.printStackTrace();
 			throw e;
 		} catch (NumberFormatException e) {
 			LOG.warning("[NumberFormatException] Parameter is not match.  [ERROR input : String baseDate = " + returnFormat + " ] -------- lastDayOfMonth");
+			e.printStackTrace();
 			throw e;
 		} catch (IllegalArgumentException e) {
 			LOG.warning("[IllegalArgumentException] Parameter is not format.  [ERROR input : String returnFormat = " + returnFormat + " ] -------- lastDayOfMonth");
+			e.printStackTrace();
 			throw e;
 		}
 
