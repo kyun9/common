@@ -4,10 +4,13 @@ import java.time.DateTimeException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.logging.Logger;
 
 
 public class CalCulateDate {
 
+	private final static Logger LOG = Logger.getGlobal();
+	
 	public static void main(String[] args) {
 
 		// 현재 날짜 구하기 (시스템 시계, 시스템 타임존)
@@ -34,7 +37,7 @@ public class CalCulateDate {
 		System.out.println(formatedNow3);
 		System.out.println(formatedNow4);
 
-		System.out.println(lastDayOfMonth("20220201", "yyyyMMdd"));
+		System.out.println(lastDayOfMonth("20220444201", "ygyyyMMdd"));
 	}
 
 	/**
@@ -64,30 +67,30 @@ public class CalCulateDate {
 	 */
 	public static String lastDayOfMonth(String yyyyMmDd, String returnFormat) {
 		String resultStr = "";
-		if (yyyyMmDd.length() == 8) {
-			try {
-				int digitYYYY = Integer.parseInt(yyyyMmDd.substring(0, 4));
-				int digitMM = Integer.parseInt(yyyyMmDd.substring(4, 6));
-				int digitDD = Integer.parseInt(yyyyMmDd.substring(6, 8));
+
+		try {
+			int digitYYYY = Integer.parseInt(yyyyMmDd.substring(0, 4));
+			int digitMM = Integer.parseInt(yyyyMmDd.substring(4, 6));
+			int digitDD = Integer.parseInt(yyyyMmDd.substring(6, 8));
 	
-				LocalDate initial = LocalDate.of(digitYYYY, digitMM, digitDD);
-				// LocalDate start = initial.withDayOfMonth(1);  첫 날짜 
-				LocalDate end = initial.withDayOfMonth(initial.lengthOfMonth());
+			LocalDate initial = LocalDate.of(digitYYYY, digitMM, digitDD);
+			// LocalDate start = initial.withDayOfMonth(1);  첫 날짜 
+			LocalDate end = initial.withDayOfMonth(initial.lengthOfMonth());
 					
-				DateTimeFormatter formatter = DateTimeFormatter.ofPattern(returnFormat);
-				String formatedLastDayOfMonth = end.format(formatter);
+			DateTimeFormatter formatter = DateTimeFormatter.ofPattern(returnFormat);
+			String formatedLastDayOfMonth = end.format(formatter);
 					
-				resultStr = formatedLastDayOfMonth;
+			resultStr = formatedLastDayOfMonth;
 			}catch(DateTimeException e){
-				resultStr = "[DateTimeException] Parameter is not match date time.  [input : String yyyyMmDd = " + yyyyMmDd + " ] -------- lastDayOfMonth";
+				LOG.warning("[DateTimeException] Parameter is not match date time.  [input : String yyyyMmDd = " + yyyyMmDd + " ] -------- lastDayOfMonth");
+				throw e;
 			}catch(NumberFormatException e){
-				resultStr = "[NumberFormatException] Parameter is not match.  [input : String yyyyMmDd = " + returnFormat + " ] -------- lastDayOfMonth";
+				LOG.warning("[NumberFormatException] Parameter is not match.  [input : String yyyyMmDd = " + returnFormat + " ] -------- lastDayOfMonth");
+				throw e;
 			}catch(IllegalArgumentException e) {
-				resultStr = "[IllegalArgumentException] Parameter is not format.  [input : String returnFormat = " + returnFormat + " ] -------- lastDayOfMonth";
+				LOG.warning("[IllegalArgumentException] Parameter is not format.  [input : String returnFormat = " + returnFormat + " ] -------- lastDayOfMonth");
+				throw e;
 			}
-		} else {
-			resultStr = "Parameter is not match length.  [input : yyyyMmDd length = " + yyyyMmDd.length()+ " ] -------- lastDayOfMonth";
-		}
 
 		return resultStr;
 	}
