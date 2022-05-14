@@ -1,13 +1,15 @@
-package common;
+package test;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+
+import common.CalCulateDate;
 
 public class TestCode {
 	static CalCulateDate calCulateDate= new CalCulateDate();
 	
 	/* 날짜Format 테스트 */
-	void practiceFormat() {
+	public void practiceFormat() {
 		// 현재 날짜 구하기 (시스템 시계, 시스템 타임존)
 		LocalDateTime now = LocalDateTime.now();
 
@@ -33,8 +35,8 @@ public class TestCode {
 		System.out.println(formatedNow4);
 	}
 	
-	/* lastDayOfMonth함수 테스트 */
-	void getLastDayOfMonthTest() {
+	/* getLastDayOfMonth함수 테스트 */
+	public void getLastDayOfMonthTest() {
 		// 맞는 호출 yyyyMMdd
 		System.out.println(calCulateDate.getLastDayOfMonth("20220420", "yyyyMMdd"));
 		// 맞는 호출 now()형식
@@ -47,5 +49,21 @@ public class TestCode {
 		// 잘못 호출 잘못된 파라미터
 		System.out.println(calCulateDate.getLastDayOfMonth("tt","33"));
 		System.out.println(calCulateDate.getLastDayOfMonth("11","yyyyMMdd"));
+	}
+	
+	/* getFirstDayOfMonth함수 테스트 */
+	public void getFirstDayOfMonth() {
+		// 맞는 호출 yyyyMMdd
+		System.out.println(calCulateDate.getFirstDayOfMonth("20220420", "yyyyMMdd"));
+		// 맞는 호출 now()형식
+		System.out.println(calCulateDate.getFirstDayOfMonth("2022-04-20 23:32:44", "yyyy-MM-dd"));
+		// 맞는 호출 yyyyMM형식
+		System.out.println(calCulateDate.getFirstDayOfMonth("202204", "yyyyMMdd"));
+		
+		// 잘못 호출 Format형식
+		System.out.println(calCulateDate.getFirstDayOfMonth("2022-04-20 23:32:44", "yyyy-MM-ttdd"));
+		// 잘못 호출 잘못된 파라미터
+		System.out.println(calCulateDate.getFirstDayOfMonth("tt","33"));
+		System.out.println(calCulateDate.getFirstDayOfMonth("11","yyyyMMdd"));
 	}
 }
