@@ -15,19 +15,16 @@ public class CalCulateDate {
 
 	/**
 	 * @메소드명 : calCulateDayInFormat
-	 * @메소드설명 : 
+	 * @메소드설명 : calCulateDayInFormat() 입력한 날짜를 포멧형식에 맞추어 일자계산값(문자열)을 반환한다.
 	 * @작성자 : 경현
 	 * @작성자github : https://github.com/kyun9
-	 * @작성일 :
-	 * @수정일 : 
+	 * @작성일 : 2022-05-14
+	 * @수정일 : 2022-05-14
 	 * @접근제어 : public 
-	 * @파라미터 : String baseDate
+	 * @파라미터 : String baseDate (yyyyMM, yyyyMMdd)
 	 * @파라미터 : String optType
-	 * @파라미터 : String optType
-	 * @파라미터 : String optType
-	 * @파라미터 : String optType
-	 * @파라미터 : String optType
-	 * @파라미터 : String optType
+	 * @파라미터 : String optDateVal
+	 * @파라미터 : String returnFormat
 	 * @return String resultStr
 	 * @throws Exception 
 	 */
@@ -35,10 +32,25 @@ public class CalCulateDate {
 		String resultStr = "";
 		
 		try {
-			String convertBaseDate = baseDate.replace(" ", "").replace("-", "").replace(":", "");
+			LocalDate initial = convertDateFormat(baseDate);
 			
-			
-		}catch(Exception e) {
+			DateTimeFormatter formatter = DateTimeFormatter.ofPattern(returnFormat);
+			String formatedDate = calCulateDateForEachOper(initial, optType, optDateVal).format(formatter);
+
+			resultStr = formatedDate;
+		} catch (StringIndexOutOfBoundsException e) {
+			LOG.warning("[ calCulateDayInFormat() ] Parameter is not match date time.  'baseDate' must be at least 6 characters long.  [ERROR input : String baseDate = " + baseDate + " ]");
+			e.printStackTrace();
+		} catch (DateTimeException e) {
+			LOG.warning("[ calCulateDayInFormat() ] Parameter is not match Date time type.  [ERROR input : String baseDate = " + baseDate + " ]");
+			e.printStackTrace();
+		} catch (NumberFormatException e) {
+			LOG.warning("[ calCulateDayInFormat() ] Parameter is not match.  [ERROR input : String baseDate = " + returnFormat + " ]");
+			e.printStackTrace();
+		} catch (IllegalArgumentException e) {
+			LOG.warning("[ calCulateDayInFormat() ] Parameter is not format.  [ERROR input : String returnFormat = " + returnFormat + " ]");
+			e.printStackTrace();
+		} catch (Exception e) {
 			e.printStackTrace();
 		}
 		
@@ -71,16 +83,16 @@ public class CalCulateDate {
 
 			resultStr = formatedFirstDayOfMonth;
 		} catch (StringIndexOutOfBoundsException e) {
-			LOG.warning("[ getLastDayOfMonth() ] Parameter is not match date time.  'baseDate' must be at least 6 characters long.  [ERROR input : String baseDate = " + baseDate + " ]");
+			LOG.warning("[ getFirstDayOfMonth() ] Parameter is not match date time.  'baseDate' must be at least 6 characters long.  [ERROR input : String baseDate = " + baseDate + " ]");
 			e.printStackTrace();
 		} catch (DateTimeException e) {
-			LOG.warning("[ getLastDayOfMonth() ] Parameter is not match Date time type.  [ERROR input : String baseDate = " + baseDate + " ]");
+			LOG.warning("[ getFirstDayOfMonth() ] Parameter is not match Date time type.  [ERROR input : String baseDate = " + baseDate + " ]");
 			e.printStackTrace();
 		} catch (NumberFormatException e) {
-			LOG.warning("[ getLastDayOfMonth() ] Parameter is not match.  [ERROR input : String baseDate = " + returnFormat + " ]");
+			LOG.warning("[ getFirstDayOfMonth() ] Parameter is not match.  [ERROR input : String baseDate = " + returnFormat + " ]");
 			e.printStackTrace();
 		} catch (IllegalArgumentException e) {
-			LOG.warning("[ getLastDayOfMonth() ] Parameter is not format.  [ERROR input : String returnFormat = " + returnFormat + " ]");
+			LOG.warning("[ getFirstDayOfMonth() ] Parameter is not format.  [ERROR input : String returnFormat = " + returnFormat + " ]");
 			e.printStackTrace();
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -134,6 +146,39 @@ public class CalCulateDate {
 	}
 	
 	/**
+	 * @메소드명 : calCulateDateForEachOper
+	 * @메소드설명 :  일자를 연산자마다 다르게 계산한다.
+	 * @작성자 : 경현
+	 * @작성자github : https://github.com/kyun9
+	 * @작성일 : 2022-05-14
+	 * @수정일 : 2022-05-14
+	 * @접근제어 : private 
+	 * @파라미터 : LocalDate baseDate
+	 * @파라미터 : String optType
+	 * @파라미터 : String optDateVal
+	 * @return LocalDate
+	 * @throws Exception 
+	 */
+	private LocalDate calCulateDateForEachOper(LocalDate baseDate, String optType, String optDateVal) throws Exception{	
+		LocalDate resultDate = null;
+		
+		switch(optType) {
+			case "+" :  resultDate = baseDate.plusDays(Long.parseLong(optDateVal));
+				break;
+			case "-" : resultDate = baseDate.minusDays(Long.parseLong(optDateVal));
+				break;
+			default :break;
+		}
+		
+		if(resultDate == null) {
+			LOG.warning("[calCulateDateForEachOper()] Parameter is not format.  [ERROR input : String optType = " + optType + " ]. Only '+' and '-' are allowed.");
+			throw new NullPointerException();
+		}
+		
+		return resultDate;
+	}
+	
+	/**
 	 * @메소드명 : convertDateFormat
 	 * @메소드설명 :  String타입 날짜를 LocalDate 객체로 반환한다.
 	 * @작성자 : 경현
@@ -145,8 +190,12 @@ public class CalCulateDate {
 	 * @return LocalDate
 	 * @throws Exception 
 	 */
-	private LocalDate convertDateFormat(String date) throws Exception{	
-		Map<String, Integer> convertDivideBaseDate = convertBaseDate(date);
+	private LocalDate convertDateFormat(String baseDate) throws Exception{	
+		if(baseDate == null || "".equals(baseDate)) {
+			LOG.warning("[convertDateFormat()] Parameter is not format.  [ERROR input : baseDate is either Null or \"\" ]");
+			throw new Exception();
+		}
+		Map<String, Integer> convertDivideBaseDate = convertBaseDate(baseDate);
 		return  LocalDate.of(convertDivideBaseDate.get(Constant.DIGIT_YYYY), convertDivideBaseDate.get(Constant.DIGIT_MM), convertDivideBaseDate.get(Constant.DIGIT_DD));
 	}
 	
@@ -162,8 +211,8 @@ public class CalCulateDate {
 	 * @return Map<String, Integer> divideDate 
 	 * @throws Exception 
 	 */
-	private Map<String, Integer> convertBaseDate(String date) throws Exception{	
-		return divideDate(date.replace(" ", "").replace("-", "").replace(":", ""));
+	private Map<String, Integer> convertBaseDate(String baseDate) throws Exception{	
+		return divideDate(baseDate.replace(" ", "").replace("-", "").replace(":", ""));
 	}
 	
 	/**
